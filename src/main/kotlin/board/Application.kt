@@ -1,8 +1,6 @@
 package board
 
-import board.config.HttpResponseBuilder
-import board.config.HttpStatus
-import com.fasterxml.jackson.databind.ObjectMapper
+import board.config.Router
 import com.sun.net.httpserver.HttpServer
 import org.slf4j.LoggerFactory
 import java.net.InetSocketAddress
@@ -12,24 +10,12 @@ private val logger = LoggerFactory.getLogger("Application")
 fun main() {
 
     val port = 8080
-    val objectMapper = ObjectMapper()
-    val responseBuilder = HttpResponseBuilder(objectMapper)
     val server = HttpServer.create(InetSocketAddress(port), 0)
-    server.createContext("/") { exchange ->
-        val responseData = mapOf(
-            "message" to "Server is running on port $port",
-            "status" to "OK"
-        )
-        val finalResponse = responseBuilder.buildSuccessResponse(
-            status = HttpStatus.OK,
-            data = responseData
-        )
+    val router = Router()
 
-        finalResponse.headers.forEach { (key, value) ->
-            exchange.responseHeaders.set(key, value)
-        }
-        exchange.sendResponseHeaders(finalResponse.status, finalResponse.body.size.toLong())
-        exchange.responseBody.use { it.write(finalResponse.body) }
+    server.createContext("/") { exchange ->
+        logger.info("Incoming request: {} {}", exchange.requestMethod, exchange.requestURI.path)
+        router.handle(exchange)
     }
     server.executor = null
     server.start()

@@ -19,25 +19,25 @@
 
 - [X] com.sun.net.httpserver.HttpServer를 사용하여 HTTP 서버 시작
 - [ ] 포트 번호 설정 가능
-- [ ] 서버 시작/종료 로직 구현
+- [X] 서버 시작/종료 로직 구현
 
 ### 1.2 요청/응답 처리
 
-- [ ] HTTP 요청 수신 (GET, POST, PUT, DELETE)
+- [X] HTTP 요청 수신 (GET, POST, PUT, DELETE)
 - [X] HTTP 응답 생성 (상태 코드, 헤더, 바디)
-- [ ] Content-Type: application/json 지원
+- [X] Content-Type: application/json 지원
 
 ## 2. 라우팅 시스템
 
 ### 2.1 기본 라우팅
 
-- [ ] URL 패턴과 핸들러 함수 매핑 (예: `/boards` → `handleGetBoards()`)
-- [ ] HTTP 메서드별 라우팅 (GET, POST, PUT, DELETE)
+- [X] URL 패턴과 핸들러 함수 매핑 (예: `/boards` → `handleGetBoards()`)
+- [X] HTTP 메서드별 라우팅 (GET, POST, PUT, DELETE)
 - [ ] Path Variable 지원 (예: `/boards/{id}`)
 
 ### 2.2 라우팅 등록
 
-- [ ] 수동 라우트 등록 API 제공
+- [X] 수동 라우트 등록 API 제공
 
 ```kotlin
 router.get("/boards") { request -> handleGetBoards(request) }
@@ -51,7 +51,7 @@ router.delete("/boards/{id}") { request -> handleDeleteBoard(request) }
 
 ### 3.1 직렬화/역직렬화
 
-- [ ] ObjectMapper를 사용한 객체 → JSON 변환
+- [X] ObjectMapper를 사용한 객체 → JSON 변환
 - [ ] ObjectMapper를 사용한 JSON → 객체 변환
 - [ ] 요청 바디를 자동으로 Kotlin 객체로 변환
 - [X] 응답 객체를 자동으로 JSON으로 변환
@@ -104,12 +104,9 @@ val controller = BoardController(service)
 
 ### 6.1 기본 예외 핸들링
 
-- [ ] 애플리케이션 예외를 HTTP 응답으로 변환
+- [X] 애플리케이션 예외를 HTTP 응답으로 변환
 - [X] 적절한 HTTP 상태 코드 반환
-    - 400: 잘못된 요청
-    - 404: 리소스 없음
-    - 500: 서버 내부 오류
-- [ ] 에러 응답 JSON 형식 통일
+- [X] 에러 응답 JSON 형식 통일
 
 ```json
 {
