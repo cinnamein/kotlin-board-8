@@ -1,6 +1,6 @@
 # kotlin-board-8
 
-> Spring Framework 없이 코어 기능을 직접 구현하여 CRUD 기능을 개발하는 프로젝트입니다. 웹 서버를 직접 구축하며, 프레임워크의 동작 원리를 깊이 이해하는 것을 목표로 합니다.
+> Spring Framework 없이 코어 기능을 직접 구현하여 CRUD 기능을 개발하는 프로젝트입니다. 웹 서버를 직접 구축하며, 프레임워크의 동작 원리를 이해하는 것을 목표로 합니다.
 
 # 기술스택
 
@@ -24,7 +24,7 @@
 ### 1.2 요청/응답 처리
 
 - [ ] HTTP 요청 수신 (GET, POST, PUT, DELETE)
-- [ ] HTTP 응답 생성 (상태 코드, 헤더, 바디)
+- [X] HTTP 응답 생성 (상태 코드, 헤더, 바디)
 - [ ] Content-Type: application/json 지원
 
 ## 2. 라우팅 시스템
@@ -54,7 +54,7 @@ router.delete("/boards/{id}") { request -> handleDeleteBoard(request) }
 - [ ] ObjectMapper를 사용한 객체 → JSON 변환
 - [ ] ObjectMapper를 사용한 JSON → 객체 변환
 - [ ] 요청 바디를 자동으로 Kotlin 객체로 변환
-- [ ] 응답 객체를 자동으로 JSON으로 변환
+- [X] 응답 객체를 자동으로 JSON으로 변환
 
 ## 4. 데이터베이스 연동
 
@@ -105,7 +105,7 @@ val controller = BoardController(service)
 ### 6.1 기본 예외 핸들링
 
 - [ ] 애플리케이션 예외를 HTTP 응답으로 변환
-- [ ] 적절한 HTTP 상태 코드 반환
+- [X] 적절한 HTTP 상태 코드 반환
     - 400: 잘못된 요청
     - 404: 리소스 없음
     - 500: 서버 내부 오류
