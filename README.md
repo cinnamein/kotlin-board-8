@@ -17,7 +17,7 @@
 
 ### 1.1 기본 서버 실행
 
-- [ ] com.sun.net.httpserver.HttpServer를 사용하여 HTTP 서버 시작
+- [X] com.sun.net.httpserver.HttpServer를 사용하여 HTTP 서버 시작
 - [ ] 포트 번호 설정 가능
 - [ ] 서버 시작/종료 로직 구현
 
