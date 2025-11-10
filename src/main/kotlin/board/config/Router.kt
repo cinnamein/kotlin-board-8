@@ -1,27 +1,27 @@
 package board.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.sun.net.httpserver.HttpExchange
 
-class Router {
+class Router(
+    private val jsonConverter: JsonConverter,
+    private val httpResponseBuilder: HttpResponseBuilder
+) {
 
     private val routes = mutableListOf<Route>()
-    private val objectMapper = ObjectMapper()
-    private val httpResponseBuilder = HttpResponseBuilder(objectMapper)
 
-    fun get(path: String, handler: (HttpExchange) -> Unit) {
+    fun get(path: String, handler: (HttpRequest) -> HttpResponse) {
         routes.add(Route("GET", path, handler))
     }
 
-    fun post(path: String, handler: (HttpExchange) -> Unit) {
+    fun post(path: String, handler: (HttpRequest) -> HttpResponse) {
         routes.add(Route("POST", path, handler))
     }
 
-    fun put(path: String, handler: (HttpExchange) -> Unit) {
+    fun put(path: String, handler: (HttpRequest) -> HttpResponse) {
         routes.add(Route("PUT", path, handler))
     }
 
-    fun delete(path: String, handler: (HttpExchange) -> Unit) {
+    fun delete(path: String, handler: (HttpRequest) -> HttpResponse) {
         routes.add(Route("DELETE", path, handler))
     }
 
@@ -37,7 +37,9 @@ class Router {
         }
 
         try {
-            route.handler(exchange)
+            val request = createHttpRequest(exchange)
+            val response = route.handler(request)
+            sendResponse(exchange, response)
         } catch (e: Exception) {
             val errorResponse = httpResponseBuilder.buildErrorResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -45,6 +47,16 @@ class Router {
             )
             sendResponse(exchange, errorResponse)
         }
+    }
+
+    private fun createHttpRequest(exchange: HttpExchange): HttpRequest {
+        return HttpRequest(
+            method = exchange.requestMethod,
+            path = exchange.requestURI.path,
+            headers = exchange.requestHeaders.map { it.key to it.value.first() }.toMap(),
+            body = exchange.requestBody.readBytes(),
+            jsonConverter = jsonConverter
+        )
     }
 
     fun buildSuccessResponse(status: HttpStatus, data: Any): HttpResponse {

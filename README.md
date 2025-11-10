@@ -52,8 +52,8 @@ router.delete("/boards/{id}") { request -> handleDeleteBoard(request) }
 ### 3.1 직렬화/역직렬화
 
 - [X] ObjectMapper를 사용한 객체 → JSON 변환
-- [ ] ObjectMapper를 사용한 JSON → 객체 변환
-- [ ] 요청 바디를 자동으로 Kotlin 객체로 변환
+- [X] ObjectMapper를 사용한 JSON → 객체 변환
+- [X] 요청 바디를 자동으로 Kotlin 객체로 변환
 - [X] 응답 객체를 자동으로 JSON으로 변환
 
 ## 4. 데이터베이스 연동
@@ -134,18 +134,34 @@ val controller = BoardController(service)
 ```kotlin
 @Entity
 @Table(name = "boards")
-data class Board(
+class Board(
+    id: Long = 0L,
+    title: String,
+    content: String,
+    author: String,
+    createdAt: Instant = Instant.now()
+) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    val id: Long = id
 
-    val title: String,
-    val content: String,
-    val author: String,
+    var title: String = title
+        protected set
 
-    @Column(name = "created_at")
-    val createdAt: LocalDateTime = LocalDateTime.now()
-)
+    @Column(name = "content")
+    var content: String = content
+        protected set
+
+    val author: String = author
+
+    @Column(name = "created_at", updatable = false)
+    val createdAt: Instant = createdAt
+
+    fun updateBoard(title: String, content: String) {
+        this.title = title
+        this.content = content
+    }
+}
 ```
 
 ---

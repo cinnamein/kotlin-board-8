@@ -1,0 +1,36 @@
+package board.config
+
+import kotlin.reflect.KClass
+
+data class HttpRequest(
+    val method: String,
+    val path: String,
+    val headers: Map<String, String>,
+    val body: ByteArray,
+    val pathVariables: Map<String, String> = emptyMap(),
+    private val jsonConverter: JsonConverter
+) {
+    fun <T : Any> readBody(type: KClass<T>): T {
+        return jsonConverter.deserialize(body, type)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        other as HttpRequest
+        return method == other.method &&
+                path == other.path &&
+                headers == other.headers &&
+                body.contentEquals(other.body) &&
+                pathVariables == other.pathVariables
+    }
+
+    override fun hashCode(): Int {
+        var result = method.hashCode()
+        result = 31 * result + path.hashCode()
+        result = 31 * result + headers.hashCode()
+        result = 31 * result + body.contentHashCode()
+        result = 31 * result + pathVariables.hashCode()
+        return result
+    }
+}

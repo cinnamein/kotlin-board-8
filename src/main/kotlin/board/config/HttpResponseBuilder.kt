@@ -1,16 +1,14 @@
 package board.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
-
 class HttpResponseBuilder(
-    private val objectMapper: ObjectMapper,
+    private val jsonConverter: JsonConverter
 ) {
 
     fun buildSuccessResponse(
         status: HttpStatus,
         data: Any,
     ): HttpResponse {
-        val jsonBody = objectMapper.writeValueAsBytes(data)
+        val jsonBody = jsonConverter.serialize(data)
         return HttpResponse(
             status = status.statusCode,
             headers = mapOf("Content-Type" to "application/json"),
@@ -27,7 +25,7 @@ class HttpResponseBuilder(
             errorCode = status.statusCode,
             message = finalMessage
         )
-        val jsonBody = objectMapper.writeValueAsBytes(errorDto)
+        val jsonBody = jsonConverter.serialize(errorDto)
         return HttpResponse(
             status = status.statusCode,
             headers = mapOf("Content-Type" to "application/json"),
