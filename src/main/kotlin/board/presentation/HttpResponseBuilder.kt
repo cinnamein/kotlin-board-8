@@ -1,4 +1,4 @@
-package board.config
+package board.presentation
 
 class HttpResponseBuilder(
     private val jsonConverter: JsonConverter

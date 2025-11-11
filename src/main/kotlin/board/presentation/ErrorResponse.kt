@@ -1,4 +1,4 @@
-package board.config
+package board.presentation
 
 data class ErrorResponse(
     val errorCode: Int,
