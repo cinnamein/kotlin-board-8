@@ -1,7 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.2.0"
-    kotlin("plugin.jpa") version "2.2.0"
-    application
+    kotlin("jvm") version "1.9.25"
+    kotlin("plugin.jpa") version "1.9.25"
 }
 
 group = "cinnamein"
@@ -13,8 +12,8 @@ repositories {
 
 dependencies {
     // Kotlin
-    implementation(kotlin("stdlib"))
-    implementation(kotlin("reflect"))
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.25")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.25")
 
     // Jackson for JSON
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.1")
@@ -32,19 +31,41 @@ dependencies {
     runtimeOnly("com.h2database:h2:2.2.224")
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.4.14")
-    implementation("org.slf4j:slf4j-api:2.0.11")
+    implementation("ch.qos.logback:logback-classic:1.5.20")
+    implementation("ch.qos.logback:logback-core:1.5.20")
 
     // test
-    testImplementation(kotlin("test"))
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
-tasks.test {
-    useJUnitPlatform()
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict")
+    }
 }
+
 kotlin {
     jvmToolchain(21)
 }
-application {
+
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
+tasks.withType<Jar> {
+    manifest.attributes["Main-Class"] = "board.ApplicationKt"
+    from(
+        configurations.getByName("runtimeClasspath").map {
+            if (it.isDirectory) it else zipTree(it)
+        }
+    )
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.register<JavaExec>("bootJar") {
+    dependsOn("build")
+    val jarTask = tasks.named<Jar>("jar")
+    classpath = files(jarTask.flatMap { it.archiveFile })
     mainClass.set("board.ApplicationKt")
 }
