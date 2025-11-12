@@ -60,12 +60,12 @@ router.delete("/boards/{id}") { request -> handleDeleteBoard(request) }
 
 ### 4.1 데이터 소스 설정
 
-- [ ] HikariCP를 사용한 커넥션 풀 구성
-- [ ] 데이터베이스 연결 정보 설정
+- [X] HikariCP를 사용한 커넥션 풀 구성
+- [X] 메모리 H2 데이터베이스 연결 설정
 
 ### 4.2 JPA/Hibernate 설정
 
-- [ ] EntityManagerFactory 생성
+- [X] EntityManagerFactory 생성
 - [ ] EntityManager 관리
 - [ ] 기본 CRUD 작업 지원
     - [ ] 엔티티 저장 (persist)
