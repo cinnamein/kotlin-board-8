@@ -1,4 +1,4 @@
-package board.config
+package board.presentation
 
 import com.sun.net.httpserver.HttpExchange
 

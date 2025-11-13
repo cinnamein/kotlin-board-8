@@ -1,10 +1,8 @@
 package board
 
-import board.config.HttpResponseBuilder
-import board.config.HttpStatus
-import board.config.JsonConverter
-import board.config.Router
-import board.domain.Board
+import board.presentation.HttpResponseBuilder
+import board.presentation.JsonConverter
+import board.presentation.Router
 import com.sun.net.httpserver.HttpServer
 import org.slf4j.LoggerFactory
 import java.net.InetSocketAddress

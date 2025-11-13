@@ -1,4 +1,4 @@
-package board.config
+package board.presentation
 
 enum class HttpStatus(
     val statusCode: Int,
