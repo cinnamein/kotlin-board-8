@@ -66,7 +66,7 @@ router.delete("/boards/{id}") { request -> handleDeleteBoard(request) }
 ### 4.2 JPA/Hibernate 설정
 
 - [X] EntityManagerFactory 생성
-- [ ] EntityManager 관리
+- [X] EntityManager 관리
 - [ ] 기본 CRUD 작업 지원
     - [ ] 엔티티 저장 (persist)
     - [ ] 엔티티 조회 (find)
