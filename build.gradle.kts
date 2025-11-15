@@ -30,6 +30,9 @@ dependencies {
     // H2 Database
     runtimeOnly("com.h2database:h2:2.2.224")
 
+    // Dependency Injection API
+    implementation("org.reflections:reflections:0.10.2")
+
     // Logging
     implementation("ch.qos.logback:logback-classic:1.5.20")
     implementation("ch.qos.logback:logback-core:1.5.20")

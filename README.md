@@ -91,8 +91,7 @@ try {
 
 ### 5.1 수동 DI
 
-- [ ] Controller, Service, Repository 계층 분리
-- [ ] 생성자를 통한 수동 의존성 주입
+- [X] Controller, Service, Repository 계층 분리
 
 ```kotlin
 val repository = BoardRepository(entityManager)
