@@ -1,4 +1,4 @@
-package board.presentation
+package web.http
 
 data class HttpResponse(
     val status: Int,

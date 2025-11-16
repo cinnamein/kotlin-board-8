@@ -1,5 +1,6 @@
-package board.presentation
+package web.http
 
+import web.http.converter.JsonConverter
 import kotlin.reflect.KClass
 
 data class HttpRequest(

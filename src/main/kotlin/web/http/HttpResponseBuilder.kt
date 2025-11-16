@@ -1,4 +1,6 @@
-package board.presentation
+package web.http
+
+import web.http.converter.JsonConverter
 
 class HttpResponseBuilder(
     private val jsonConverter: JsonConverter

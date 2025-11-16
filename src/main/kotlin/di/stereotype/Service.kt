@@ -1,6 +1,6 @@
-package board.infrastructure.di.stereotype
+package di.stereotype
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @Component
-annotation class Configuration
+annotation class Service

@@ -1,4 +1,4 @@
-package board.infrastructure.di.context
+package di.context
 
 import org.reflections.Reflections
 import java.lang.reflect.Method

@@ -1,4 +1,4 @@
-package board.infrastructure.di.context
+package di.context
 
 import org.slf4j.LoggerFactory
 import kotlin.reflect.KClass

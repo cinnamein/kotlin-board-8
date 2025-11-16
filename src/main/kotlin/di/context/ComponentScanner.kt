@@ -1,8 +1,8 @@
-package board.infrastructure.di.context
+package di.context
 
-import board.infrastructure.di.stereotype.Bean
-import board.infrastructure.di.stereotype.Component
-import board.infrastructure.di.stereotype.Configuration
+import di.stereotype.Bean
+import di.stereotype.Component
+import di.stereotype.Configuration
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import org.reflections.util.ConfigurationBuilder
