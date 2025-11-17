@@ -32,7 +32,7 @@ class ComponentScanner {
 
     private fun createReflections(baseClass: Class<*>): Reflections {
         val configBuilder = ConfigurationBuilder()
-            .forPackages(baseClass.packageName)
+            .forPackages("board")
             .addScanners(Scanners.TypesAnnotated)
             .addClassLoaders(baseClass.classLoader)
 
