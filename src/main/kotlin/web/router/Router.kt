@@ -13,6 +13,7 @@ class Router(
 ) {
 
     private val routes = mutableListOf<Route>()
+    private val pathMatcher = PathMatcher()
 
     fun get(path: String, handler: (HttpRequest) -> HttpResponse) {
         routes.add(Route("GET", path, handler))
@@ -34,32 +35,46 @@ class Router(
         val method = exchange.requestMethod
         val path = exchange.requestURI.path
 
-        val route = routes.find { it.method == method && it.path == path }
-        if (route == null) {
+        val matchedRoutes = routes.mapNotNull { route ->
+            if (route.method != method) {
+                return@mapNotNull null
+            }
+            val pathVariables = pathMatcher.match(route.path, path)
+            if (pathVariables != null) {
+                Triple(route, pathVariables, pathMatcher.getSpecificityScore(route.path))
+            } else {
+                null
+            }
+        }
+
+        val bestMatch = matchedRoutes.maxByOrNull { it.third }
+        if (bestMatch == null) {
             val errorResponse = httpResponseBuilder.buildErrorResponse(HttpStatus.NOT_FOUND)
             sendResponse(exchange, errorResponse)
             return
         }
+        val (route, pathVariables, _) = bestMatch
 
         try {
-            val request = createHttpRequest(exchange)
+            val request = createHttpRequest(exchange, pathVariables)
             val response = route.handler(request)
             sendResponse(exchange, response)
         } catch (e: Exception) {
-            val errorResponse = httpResponseBuilder.buildErrorResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                e.message
-            )
+            val errorResponse = buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.message)
             sendResponse(exchange, errorResponse)
         }
     }
 
-    private fun createHttpRequest(exchange: HttpExchange): HttpRequest {
+    private fun createHttpRequest(
+        exchange: HttpExchange,
+        pathVariables: Map<String, String>
+    ): HttpRequest {
         return HttpRequest(
             method = exchange.requestMethod,
             path = exchange.requestURI.path,
             headers = exchange.requestHeaders.map { it.key to it.value.first() }.toMap(),
             body = exchange.requestBody.readBytes(),
+            pathVariables = pathVariables,
             jsonConverter = jsonConverter
         )
     }

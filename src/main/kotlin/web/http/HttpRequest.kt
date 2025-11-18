@@ -15,6 +15,18 @@ data class HttpRequest(
         return jsonConverter.deserialize(body, type)
     }
 
+    fun getBodyAsString(): String {
+        return body.toString(Charsets.UTF_8)
+    }
+
+    fun getHeader(name: String): String? {
+        return headers[name]
+    }
+
+    fun getPathVariable(name: String): String? {
+        return pathVariables[name]
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -34,4 +46,8 @@ data class HttpRequest(
         result = 31 * result + pathVariables.hashCode()
         return result
     }
+}
+
+inline fun <reified T : Any> HttpRequest.readBody(): T {
+    return this.readBody(T::class)
 }

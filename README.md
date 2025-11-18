@@ -33,7 +33,7 @@
 
 - [X] URL 패턴과 핸들러 함수 매핑 (예: `/boards` → `handleGetBoards()`)
 - [X] HTTP 메서드별 라우팅 (GET, POST, PUT, DELETE)
-- [ ] Path Variable 지원 (예: `/boards/{id}`)
+- [X] Path Variable 지원 (예: `/boards/{id}`)
 
 ### 2.2 라우팅 등록
 
