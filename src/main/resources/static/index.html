@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Board Service</title>
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --text-secondary: #6b7280;
+            --danger-color: #ef4444;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: var(--text-color);
+        }
+
+        /* 입력 폼 스타일 */
+        .input-group {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button.danger {
+            background-color: var(--danger-color);
+        }
+        button.danger:hover {
+            background-color: #dc2626;
+        }
+
+        /* 게시글 목록 스타일 */
+        #board-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .board-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: transform 0.2s;
+        }
+
+        .board-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .board-info {
+            flex-grow: 1;
+            margin-right: 15px;
+        }
+
+        .board-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+        }
+
+        .board-info .meta {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .board-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+        }
+        .close-btn:hover { color: #000; }
+
+        .read-only-field {
+            background-color: #eee;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 게시판</h1>
+
+    <div class="input-group">
+        <h2>새 글 작성</h2>
+        <div class="row">
+            <input id="create-title" placeholder="제목" style="flex: 2;">
+            <input id="create-author" placeholder="작성자 (Author)" style="flex: 1;">
+        </div>
+        <textarea id="create-content" placeholder="내용을 입력하세요"></textarea>
+        <button onclick="createBoard()">등록하기</button>
+    </div>
+
+    <h2>게시글 목록</h2>
+    <div id="board-list">
+        <p style="text-align: center; color: #999;">로딩 중...</p>
+    </div>
+</div>
+
+<div id="detail-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2 id="modal-title-text">게시글 수정</h2>
+        <input type="hidden" id="update-id">
+
+        <div style="margin-bottom: 10px;" class="row">
+            <div style="flex:1">
+                <label style="font-size: 12px; color: #666;">작성자</label>
+                <input id="view-author" class="read-only-field" readonly>
+            </div>
+            <div style="flex:1">
+                <label style="font-size: 12px; color: #666;">작성일</label>
+                <input id="view-created-at" class="read-only-field" readonly>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <label style="font-size: 12px; color: #666;">제목</label>
+            <input id="update-title">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; color: #666;">내용</label>
+            <textarea id="update-content" style="height: 150px;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button class="danger" onclick="deleteCurrentBoard()">삭제</button>
+            <button onclick="updateBoard()">수정 저장</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = "/boards";
+
+    // 1. 게시글 목록 조회 (GET /boards) -> BoardResponseDto[]
+    async function fetchBoards() {
+        try {
+            const res = await fetch(API);
+            if (!res.ok) throw new Error("Failed to fetch");
+            const data = await res.json();
+
+            const list = document.getElementById("board-list");
+            list.innerHTML = "";
+
+            if (data.length === 0) {
+                list.innerHTML = "<p style='text-align:center; color:#999;'>게시글이 없습니다.</p>";
+                return;
+            }
+
+            data.forEach(board => {
+                const item = document.createElement("div");
+                item.className = "board-card";
+
+                // DTO 필드 매핑: title, content, author, createdAt
+                item.innerHTML = `
+                    <div class="board-info">
+                        <h3>${board.title}</h3>
+                        <div class="meta">
+                            <span>👤 ${board.author}</span> |
+                            <span>📅 ${board.createdAt}</span>
+                        </div>
+                        <p>${board.content}</p>
+                    </div>
+                    <div class="card-actions">
+                        <button onclick="openDetailModal(${board.id})">상세/수정</button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        } catch (e) {
+            console.error(e);
+            document.getElementById("board-list").innerHTML = "<p style='text-align:center; color:red;'>목록을 불러오지 못했습니다.</p>";
+        }
+    }
+
+    // 2. 게시글 상세 조회 (GET /boards/{id}) -> BoardResponseDto
+    async function openDetailModal(id) {
+        try {
+            const res = await fetch(`${API}/${id}`);
+            if (!res.ok) throw new Error("Failed to fetch detail");
+            const data = await res.json();
+
+            // 데이터 바인딩
+            document.getElementById("update-id").value = data.id;
+
+            // 수정 가능 필드
+            document.getElementById("update-title").value = data.title;
+            document.getElementById("update-content").value = data.content;
+
+            // 읽기 전용 필드 (DTO에 있지만 수정 DTO엔 없음)
+            document.getElementById("view-author").value = data.author;
+            document.getElementById("view-created-at").value = data.createdAt;
+
+            document.getElementById("modal-title-text").innerText = `게시글 #${data.id} 상세 및 수정`;
+
+            // 모달 표시
+            document.getElementById("detail-modal").style.display = "flex";
+        } catch (e) {
+            alert("게시글 정보를 불러오는데 실패했습니다.");
+        }
+    }
+
+    // 3. 게시글 생성 (POST /boards) -> Request: BoardRequestDto
+    async function createBoard() {
+        const titleInput = document.getElementById("create-title");
+        const contentInput = document.getElementById("create-content");
+        const authorInput = document.getElementById("create-author"); // 추가됨
+
+        if (!titleInput.value || !contentInput.value || !authorInput.value) {
+            alert("제목, 내용, 작성자를 모두 입력해주세요.");
+            return;
+        }
+
+        try {
+            await fetch(API, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                // DTO: title, content, author
+                body: JSON.stringify({
+                    title: titleInput.value,
+                    content: contentInput.value,
+                    author: authorInput.value
+                })
+            });
+
+            // 입력창 초기화 및 목록 갱신
+            titleInput.value = "";
+            contentInput.value = "";
+            authorInput.value = "";
+            fetchBoards();
+        } catch (e) {
+            alert("생성 실패");
+        }
+    }
+
+    // 4. 게시글 수정 (PUT /boards) -> Request: BoardUpdateRequestDto
+    async function updateBoard() {
+        const id = document.getElementById("update-id").value;
+        const title = document.getElementById("update-title").value;
+        const content = document.getElementById("update-content").value;
+
+        // author는 BoardUpdateRequestDto에 없으므로 보내지 않음
+
+        try {
+            await fetch(API, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                // DTO: id, title, content
+                body: JSON.stringify({
+                    id: parseInt(id), // ID는 Long 타입 매칭을 위해 숫자 변환 권장
+                    title: title,
+                    content: content
+                })
+            });
+
+            closeModal();
+            fetchBoards();
+        } catch (e) {
+            alert("수정 실패");
+        }
+    }
+
+    // 5. 게시글 삭제 (DELETE /boards/{id})
+    async function deleteCurrentBoard() {
+        const id = document.getElementById("update-id").value;
+        if (!confirm("정말로 삭제하시겠습니까?")) return;
+
+        try {
+            await fetch(`${API}/${id}`, { method: "DELETE" });
+            closeModal();
+            fetchBoards();
+        } catch (e) {
+            alert("삭제 실패");
+        }
+    }
+
+    function closeModal() {
+        document.getElementById("detail-modal").style.display = "none";
+    }
+
+    window.onload = fetchBoards;
+
+    window.onclick = function(event) {
+        const modal = document.getElementById("detail-modal");
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+</script>
+
+</body>
+</html>

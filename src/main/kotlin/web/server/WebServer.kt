@@ -23,8 +23,29 @@ class WebServer(
 
         controllerScanner.scanAndRegister(router)
         server.createContext("/") { exchange ->
-            logger.info("Incoming request: {} {}", exchange.requestMethod, exchange.requestURI.path)
-            router.handle(exchange)
+            val path = exchange.requestURI.path
+            if (path == "" || path == "/" || path == "/index.html") {
+                val htmlStream = javaClass.classLoader.getResourceAsStream("static/index.html")
+
+                if (htmlStream != null) {
+                    val responseBytes = htmlStream.readAllBytes()
+                    exchange.responseHeaders.add("Content-Type", "text/html; charset=UTF-8")
+                    exchange.sendResponseHeaders(200, responseBytes.size.toLong())
+                    exchange.responseBody.use { os ->
+                        os.write(responseBytes)
+                    }
+                    logger.info("Served index.html directly")
+                } else {
+                    val response = "404 Not Found (Check src/main/resources/static/index.html)"
+                    exchange.sendResponseHeaders(404, response.length.toLong())
+                    exchange.responseBody.use { os ->
+                        os.write(response.toByteArray())
+                    }
+                }
+            } else {
+                logger.info("Incoming request: {} {}", exchange.requestMethod, path)
+                router.handle(exchange)
+            }
         }
         server.executor = null
         server.start()

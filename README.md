@@ -122,11 +122,11 @@ val controller = BoardController(service)
 
 ### API 엔드포인트
 
-- [ ] `GET /boards` - 전체 게시글 목록 조회
-- [ ] `GET /boards/{id}` - 특정 게시글 상세 조회
-- [ ] `POST /boards` - 새 게시글 생성
-- [ ] `PUT /boards/{id}` - 게시글 정보 수정
-- [ ] `DELETE /boards/{id}` - 게시글 삭제
+- [X] `GET /boards` - 전체 게시글 목록 조회
+- [X] `GET /boards/{id}` - 특정 게시글 상세 조회
+- [X] `POST /boards` - 새 게시글 생성
+- [X] `PUT /boards/{id}` - 게시글 정보 수정
+- [X] `DELETE /boards/{id}` - 게시글 삭제
 
 ### Board 엔티티
 
