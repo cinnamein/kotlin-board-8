@@ -16,13 +16,15 @@ class Board(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = id
 
+    @Column
     var title: String = title
         protected set
 
-    @Column(name = "content")
+    @Column
     var content: String = content
         protected set
 
+    @Column
     val author: String = author
 
     @Column(name = "created_at", updatable = false)

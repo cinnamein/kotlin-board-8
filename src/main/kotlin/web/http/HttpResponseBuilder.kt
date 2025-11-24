@@ -6,6 +6,13 @@ class HttpResponseBuilder(
     private val jsonConverter: JsonConverter
 ) {
 
+    /**
+     * 성공 응답을 빌드합니다.
+     *
+     * @param status HTTP 상태
+     * @param data 응답 데이터
+     * @return HTTP 응답 객체
+     */
     fun buildSuccessResponse(
         status: HttpStatus,
         data: Any,
@@ -18,6 +25,13 @@ class HttpResponseBuilder(
         )
     }
 
+    /**
+     * 에러 응답을 빌드합니다.
+     *
+     * @param status HTTP 상태
+     * @param message 에러 메시지
+     * @return HTTP 응답 객체
+     */
     fun buildErrorResponse(
         status: HttpStatus,
         message: String? = null,

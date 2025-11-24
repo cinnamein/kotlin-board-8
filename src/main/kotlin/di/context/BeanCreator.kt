@@ -12,6 +12,12 @@ class BeanCreator(
 
     private val logger = LoggerFactory.getLogger(BeanCreator::class.java)
 
+    /**
+     * 빈을 조회하거나 생성합니다.
+     *
+     * @param clazz 조회할 빈 타입
+     * @return 빈 인스턴스
+     */
     fun <T : Any> getOrCreate(clazz: Class<T>): T {
         registry.getSingleton(clazz)?.let {
             @Suppress("UNCHECKED_CAST")
@@ -33,6 +39,12 @@ class BeanCreator(
         }
     }
 
+    /**
+     * 빈을 생성합니다.
+     *
+     * @param clazz 생성할 빈 타입
+     * @return 생성된 빈 인스턴스
+     */
     private fun <T : Any> create(clazz: Class<T>): T {
         return when {
             registry.getBeanMethod(clazz) != null -> createFromBeanMethod(clazz)
@@ -41,6 +53,12 @@ class BeanCreator(
         }
     }
 
+    /**
+     * @Bean 메서드로부터 빈을 생성합니다.
+     *
+     * @param clazz 생성할 빈 타입
+     * @return 생성된 빈 인스턴스
+     */
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> createFromBeanMethod(clazz: Class<T>): T {
         val method = registry.getBeanMethod(clazz)
@@ -53,6 +71,12 @@ class BeanCreator(
         return method.invoke(configInstance, *dependencies.toTypedArray()) as T
     }
 
+    /**
+     * 생성자로부터 빈을 생성합니다.
+     *
+     * @param clazz 생성할 빈 타입
+     * @return 생성된 빈 인스턴스
+     */
     private fun <T : Any> createFromConstructor(clazz: Class<T>): T {
         val kClass: KClass<T> = clazz.kotlin
         val constructor: KFunction<T> = kClass.primaryConstructor
@@ -63,7 +87,6 @@ class BeanCreator(
             val paramType = param.type.jvmErasure.java
             getOrCreate(paramType)
         }
-
         return constructor.call(*dependencies.toTypedArray())
     }
 }

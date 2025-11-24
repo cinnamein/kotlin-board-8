@@ -7,6 +7,12 @@ class JpaTemplate(
     private val emf: EntityManagerFactory
 ) {
 
+    /**
+     * 트랜잭션 내에서 작업을 실행합니다.
+     *
+     * @param action 실행할 작업
+     * @return 작업 실행 결과
+     */
     fun <T> executeInTransaction(
         action: (EntityManager) -> T
     ): T {
@@ -27,6 +33,12 @@ class JpaTemplate(
         }
     }
 
+    /**
+     * 트랜잭션 없이 작업을 실행합니다.
+     *
+     * @param action 실행할 작업
+     * @return 작업 실행 결과
+     */
     fun <T> execute(
         action: (EntityManager) -> T
     ): T {

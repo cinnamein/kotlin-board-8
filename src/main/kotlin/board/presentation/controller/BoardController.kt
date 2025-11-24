@@ -22,6 +22,11 @@ class BoardController(
     private val httpResponseBuilder: HttpResponseBuilder = HttpResponseBuilder(jsonConverter)
 ) {
 
+    /**
+     * 전체 게시글 목록을 조회합니다.
+     *
+     * @return HTTP 응답
+     */
     @GetMapping("/boards")
     fun readBoards(): HttpResponse {
         val boards = boardService.getAllBoards()
@@ -31,6 +36,12 @@ class BoardController(
         )
     }
 
+    /**
+     * 새 게시글을 생성합니다.
+     *
+     * @param request HTTP 요청
+     * @return HTTP 응답
+     */
     @PostMapping("/boards")
     fun createBoard(request: HttpRequest): HttpResponse {
         val boardRequest = request.readBody<BoardRequestDto>()
@@ -41,6 +52,12 @@ class BoardController(
         )
     }
 
+    /**
+     * 특정 게시글을 조회합니다.
+     *
+     * @param request HTTP 요청
+     * @return HTTP 응답
+     */
     @GetMapping("/boards/{id}")
     fun readBoard(request: HttpRequest): HttpResponse {
         val id = request.getPathVariable("id")!!
@@ -51,6 +68,12 @@ class BoardController(
         )
     }
 
+    /**
+     * 게시글을 수정합니다.
+     *
+     * @param request HTTP 요청
+     * @return HTTP 응답
+     */
     @PutMapping("/boards")
     fun updateBoard(request: HttpRequest): HttpResponse {
         val boardUpdateRequest = request.readBody<BoardUpdateRequestDto>()
@@ -61,6 +84,12 @@ class BoardController(
         )
     }
 
+    /**
+     * 게시글을 삭제합니다.
+     *
+     * @param request HTTP 요청
+     * @return HTTP 응답
+     */
     @DeleteMapping("/boards/{id}")
     fun deleteBoard(request: HttpRequest): HttpResponse {
         val id = request.getPathVariable("id")!!

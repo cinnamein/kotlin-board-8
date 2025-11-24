@@ -8,6 +8,11 @@ import jakarta.persistence.Persistence
 @Configuration
 class EntityManagerConfig {
 
+    /**
+     * EntityManagerFactory 빈을 생성합니다.
+     *
+     * @return EntityManagerFactory 인스턴스
+     */
     @Bean
     fun entityManagerFactory(): EntityManagerFactory {
         return Persistence.createEntityManagerFactory(

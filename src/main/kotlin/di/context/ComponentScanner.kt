@@ -14,15 +14,19 @@ class ComponentScanner {
 
     private val logger: Logger = LoggerFactory.getLogger(ComponentScanner::class.java)
 
+    /**
+     * 지정된 패키지에서 컴포넌트를 스캔합니다.
+     *
+     * @param baseClass 스캔 기준 클래스
+     * @return 스캔 결과
+     */
     fun scan(baseClass: Class<*>): ScanResult {
         logger.info("Scanning package: ${baseClass.packageName}")
 
         val reflections = createReflections(baseClass)
         val componentClasses = scanComponents(reflections)
         val beanMethods = scanBeanMethods(reflections, componentClasses)
-
         logger.info("Found ${componentClasses.size} @Component and ${beanMethods.size} @Bean definitions")
-
         return ScanResult(
             beanMethods = beanMethods,
             componentClasses = componentClasses,
@@ -30,15 +34,26 @@ class ComponentScanner {
         )
     }
 
+    /**
+     * Reflections 객체를 생성합니다.
+     *
+     * @param baseClass 스캔 기준 클래스
+     * @return 생성된 Reflections 객체
+     */
     private fun createReflections(baseClass: Class<*>): Reflections {
         val configBuilder = ConfigurationBuilder()
             .forPackages("board")
             .addScanners(Scanners.TypesAnnotated)
             .addClassLoaders(baseClass.classLoader)
-
         return Reflections(configBuilder)
     }
 
+    /**
+     * @Component 애노테이션이 붙은 클래스를 스캔합니다.
+     *
+     * @param reflections Reflections 객체
+     * @return 스캔된 컴포넌트 클래스 집합
+     */
     private fun scanComponents(reflections: Reflections): Set<Class<*>> {
         val components = mutableSetOf<Class<*>>()
         components.addAll(
@@ -48,7 +63,6 @@ class ComponentScanner {
 
         val metaAnnotations = reflections.getTypesAnnotatedWith(Component::class.java, true)
             .filter { it.isAnnotation }
-
         for (metaAnnotation in metaAnnotations) {
             @Suppress("UNCHECKED_CAST")
             val annotationClass = metaAnnotation as Class<out Annotation>
@@ -58,10 +72,16 @@ class ComponentScanner {
             )
             logger.debug("Found meta-annotation: ${metaAnnotation.simpleName}")
         }
-
         return components
     }
 
+    /**
+     * @Bean 애노테이션이 붙은 메서드를 스캔합니다.
+     *
+     * @param reflections Reflections 객체
+     * @param componentClasses 컴포넌트 클래스 집합
+     * @return 빈 타입과 메서드의 맵
+     */
     private fun scanBeanMethods(
         reflections: Reflections,
         componentClasses: Set<Class<*>>
