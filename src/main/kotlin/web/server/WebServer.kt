@@ -25,6 +25,7 @@ class WebServer(
         val router = createRouter(jsonConverter, httpResponseBuilder)
         registerRoutes(server, router)
         startServer(server)
+        closeServer(server)
     }
 
     /**
@@ -129,5 +130,11 @@ class WebServer(
         server.executor = null
         server.start()
         logger.info("Server started on http://localhost:$port")
+    }
+
+    private fun closeServer(server: HttpServer) {
+        Runtime.getRuntime().addShutdownHook(Thread {
+            server.stop(0)
+        })
     }
 }
